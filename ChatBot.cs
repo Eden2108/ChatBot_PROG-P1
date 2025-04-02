@@ -55,7 +55,7 @@ namespace ChatBot_PROGP1
             while (true) // Continuously prompt user for input and provide response // It is an Infinite Chat Loop
             { // User Input and Loop for Chatbot Responses
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("\nYou:");// Fix this part
+                Console.Write($"\n {userName}");// Fix this part
                 string userInput = Console.ReadLine().ToLower();
                 Console.ResetColor();
 
