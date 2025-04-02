@@ -1,66 +1,35 @@
-name: .NET Core Desktop
+name: .NET CI
 
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+on: [push, pull_request]
 
 jobs:
   build:
+    runs-on: windows-latest
+
     strategy:
       matrix:
         configuration: [Debug, Release]
 
-    runs-on: windows-latest
-
-    env:
-      Solution_Name: ChatBot_PROG P1.sln                          
-      Test_Project_Path: ChatBot_PROG P1.csproj 
-
     steps:
-    - name: Checkout Repository
+    - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
-    - name: Install .NET Core
-      uses: actions/setup-dotnet@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.x  # ⚠️ Ensure your project supports .NET 8
-
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+        dotnet-version: '9.0.x' # Adjust if needed
 
     - name: Restore Dependencies
-      run: dotnet restore ${{ env.Solution_Name }}
+      run: dotnet restore "ChatBot_PROG P1.sln"
 
     - name: Build Solution
-      run: msbuild ${{ env.Solution_Name }} /p:Configuration=${{ matrix.configuration }}
+      run: dotnet build "ChatBot_PROG P1.sln" --configuration ${{ matrix.configuration }} --no-restore
 
     - name: Execute Unit Tests
-      run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-restore --verbosity normal
-
-    - name: Restore Application (WAP)
-      run: msbuild ${{ env.Solution_Name }} /t:Restore /p:Configuration=${{ matrix.configuration }}
-
-    # Signing step (only if secrets are set)
-    - name: Decode the PFX (Signing Certificate)
-      if: env.Base64_Encoded_Pfx != ''
-      run: |
-        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
-        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
-
-    - name: Create the App Package
-      run: msbuild ${{ env.Wap_Project_Path }} /p:Configuration=${{ matrix.configuration }} /p:UapAppxPackageBuildMode=StoreUpload /p:AppxBundle=Always /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
-
-    - name: Remove the PFX (Signing Certificate)
-      if: env.Base64_Encoded_Pfx != ''
-      run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
+      run: dotnet test "ChatBot_PROG P1.sln" --configuration ${{ matrix.configuration }} --no-restore --verbosity normal
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: MSIX Package
-        path: ${{ env.Wap_Project_Directory }}/AppPackages
+        name: Build Output - ${{ matrix.configuration }}
+        path: bin/${{ matrix.configuration }}/
