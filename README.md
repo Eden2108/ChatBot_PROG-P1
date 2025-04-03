@@ -1,11 +1,10 @@
-# ChatBot_PROG P1
-# BeckyBot: Cybersecurity Awareness Chatbot 🚀🔒💻
+# ChatBot_PROG P1 🚀🔒💻
 
 ## **Project Overview** 🎯🛡️💬
-BeckyBot is a **console-based chatbot** designed to educate users about **cybersecurity best practices**. The chatbot provides information on topics such as **password safety, phishing, ransomware, and safe browsing**. It also enhances user engagement with **ASCII art, voice greetings, and a simulated typing effect**. 🎨🔊💻
+The Chatbot is a **console-based chatbot** that is designed to educate users about **cybersecurity best practices**. The chatbot provides information on topics such as **password safety, phishing, ransomware, and safe browsing**. It also enhances user engagement with **ASCII art, voice greetings, and a simulated typing effect**. 🎨🔊💻
 
 ## **Features** 🎙️🖥️✨
-- **Interactive Chat System:** Users can ask questions related to cybersecurity, and BeckyBot responds with predefined answers.
+- **Interactive Chat System:** Enables users to ask questions related to cybersecurity, and BeckyBot responds with predefined answers.
 - **Typing Effect:** Simulates real-time typing for a more engaging experience.
 - **Voice Greeting:** Plays an audio greeting upon startup.
 - **ASCII Art:** Displays a padlock image in ASCII format to enhance the visual appeal.
@@ -17,7 +16,7 @@ BeckyBot is a **console-based chatbot** designed to educate users about **cybers
 ## **Installation and Setup** ⚙️💾📥
 ### **Prerequisites:**
 - Windows OS (for SoundPlayer compatibility)
-- .NET Framework (C# Development Environment)
+- .NET Framework (C# Development Environment) version 4.7.2 or 4.8
 
 ### **Steps to Run the Chatbot:**
 1. Clone or download the repository.
@@ -92,37 +91,13 @@ BeckyBot/
 
 ---
 
-## **Possible Questions from Lecturer & Answers** 🎤🎓❓
-### **1. Why did you choose `.Contains()` for keyword matching instead of an NLP approach?**
-**Answer:** Since this is a simple chatbot, `.Contains()` provides a quick and easy way to match keywords. However, for a more advanced chatbot, I would consider **regular expressions or an NLP framework** for better intent recognition. 📚🧠💡
-
-### **2. How does the chatbot handle incorrect user input?**
-**Answer:** If the input doesn't match any keywords, the chatbot provides a default response: *"I'm sorry, I didn't quite understand that. Can you please rephrase?"* This ensures a smooth user experience. 🔄🤖📜
-
-### **3. Why did you use `ArrayList` instead of a `Dictionary`?**
-**Answer:** `ArrayList` was chosen for simplicity, but a `Dictionary` would be more efficient for **fast lookups**. If scalability were a concern, I would refactor this. 📊🔄⚡
-
-### **4. What improvements would you make if this chatbot needed to handle more complex conversations?**
-**Answer:**
-- **Switch from keyword-matching to an NLP-based model.**
-- **Use a more structured chatbot framework** (like Microsoft Bot Framework).
-- **Implement user session memory** to track ongoing conversations.
-- **Add multi-turn conversations** for better interactions. 🧠💡🔄
-
-### **5. How does the chatbot play the audio greeting?**
-**Answer:** It uses the `SoundPlayer` class to play a `.wav` file from the project directory. If the file is missing, it prints an error message. 🎵🔍📜
-
----
-
 ## **Future Improvements** 🚀🔧📈
 - **Implement AI-powered responses** with NLP for a smarter chatbot.
 - **Improve efficiency** by replacing `ArrayList` with `Dictionary`.
-- **Make it cross-platform** by using .NET Core.
-- **Use a GUI instead of a console** for a better user experience.
 - **Add database support** to store and learn from past interactions. 🧠📊💾
 
 ---
 
 ## **Conclusion** 🏁🤖🔐
-BeckyBot is a simple but effective cybersecurity awareness chatbot. The project demonstrates key programming concepts like **string matching, console interaction, file handling, multithreading (for effects), and basic image processing (ASCII conversion)**. While it works well for small-scale use, **future enhancements** can make it **more scalable, intelligent, and interactive**. 🚀🎓💡
+The ChatBot is a simple but effective cybersecurity awareness chatbot. The project demonstrates key programming concepts like **string matching, console interaction, file handling, multithreading (for effects), and basic image processing (ASCII conversion)**. While it works well for small-scale use, **future enhancements** can make it **more scalable, intelligent, and interactive**. 🚀🎓💡
 
