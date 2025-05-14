@@ -1,20 +1,59 @@
-# ChatBot_PROG P1 🚀🔒💻
+# ChatBot_PROG P2 🚀🔒💻
 
-## **Project Overview** 🎯🛡️💬
-The Chatbot is a **console-based chatbot** that is designed to educate users about **cybersecurity best practices**. The chatbot provides information on topics such as **password safety, phishing, ransomware, and safe browsing**. It also enhances user engagement with **ASCII art, voice greetings, and a simulated typing effect**. 🎨🔊💻
+# 🛡️ Project Overview Cybersecurity Awareness Chatbot – Becky Bot
 
-## **Features** 🎙️🖥️✨
-- **Interactive Chat System:** Enables users to ask questions related to cybersecurity, and BeckyBot responds with predefined answers.
-- **Typing Effect:** Simulates real-time typing for a more engaging experience.
-- **Voice Greeting:** Plays an audio greeting upon startup.
-- **ASCII Art:** Displays a padlock image in ASCII format to enhance the visual appeal.
-- **Keyword-Based Response Matching:** Uses keywords to determine appropriate responses.
-- **Simple and User-Friendly Interface:** A console-based chatbot that is easy to interact with.
+Welcome to **Becky Bot**, a friendly and interactive console-based chatbot designed to educate users on essential **cybersecurity practices** such as password safety, phishing awareness, ransomware protection, and safe browsing habits.
+
+This project was developed in C# as part of an academic programming module, showcasing logic handling, modular design, and creative user engagement through audio, animation, and color formatting.
 
 ---
 
-## **Installation and Setup** ⚙️💾📥
-### **Prerequisites:**
+## ✨ Features
+
+### ✅ Educational Intelligence
+- Responds accurately to common cybersecurity queries.
+- Offers rotating answers for variety and engagement.
+- Uses keyword detection and delegate handlers for modular design.
+
+### 🎨 Enhanced User Interface (Console-Based)
+- **Color-coded text** for:
+- 🟪 **User inputs** – Magenta
+  - 🟦 **Becky Bot responses** – Cyan
+  - ⚪ **System prompts/instructions** – Gray
+
+
+- **ASCII Art title screen** at startup for a stylized introduction.
+- **Typing animation** simulates human-like response delivery.
+
+### 🔊 Multimedia Integration
+- Plays a **voice greeting** (WAV file) when the program launches, adding a personal touch.
+
+### 🧠 Memory & Context Awareness
+- **Tracks previously mentioned topics** and offers relevant follow-ups.
+- Understands natural "yes/no" responses to recall prompts:
+  > “Earlier you mentioned phishing. Would you like tips on that?”
+
+### 💬 Sentiment Detection
+- Recognizes and responds to emotions like:
+  - Confusion 😕
+  - Anxiety 😟
+---
+
+## 🧱 Code Structure
+
+| File               | Purpose |
+|--------------------|---------|
+| `Program.cs`       | Starts and runs the chatbot. |
+| `Chatbot.cs`       | Core logic, memory, response system, delegates, sentiment checks. |
+| `TypingEffect.cs`  | Typing animation logic for bot messages. |
+| `AsciiArt.cs`      | Renders decorative ASCII graphics. |
+| `VoiceGreeting.cs` | Plays greeting audio using `System.Media`. |
+
+---
+
+## 🚀 How to Run
+
+### Prerequisites
 - Windows OS (for SoundPlayer compatibility)
 - .NET Framework (C# Development Environment) version 4.7.2 or 4.8
 
@@ -26,78 +65,5 @@ The Chatbot is a **console-based chatbot** that is designed to educate users abo
 5. The chatbot will initialize, play a voice greeting, and display ASCII art.
 6. Start interacting by asking cybersecurity-related questions! 🎤🖥️🔑
 
----
-
-## **Code Structure** 📂📜🔧
-```
-BeckyBot/
-│── Program.cs          # Entry point for the chatbot
-│── Chatbot.cs          # Main chatbot logic (handles user input and responses)
-│── TypingEffect.cs     # Simulates typing effect for responses
-│── VoiceGreeting.cs    # Plays a greeting sound
-│── AsciiArt.cs         # Converts and displays an image in ASCII format
-```
 
 ---
-
-## **How It Works** 🔄🤖🎯
-1. **Startup Sequence:**
-   - Displays ASCII art.
-   - Plays an audio greeting.
-   - Initializes chatbot responses.
-   - Prompts user for their name and welcomes them. 🎤📜💬
-
-2. **User Interaction:**
-   - The chatbot continuously listens for user input.
-   - It matches input against predefined **keywords** (e.g., "password safety").
-   - If a keyword is found, the chatbot provides a relevant response.
-   - If the input is not recognized, the chatbot asks the user to rephrase. 💡🔍💬
-
-3. **Exit Condition:**
-   - Typing "exit" or "quit" will end the chatbot session. 🚪👋💻
-
----
-
-## **Design Decisions & Trade-offs** ⚖️💡🛠️
-### **1. Keyword-Based Response Matching**
-**Decision:** Uses `.Contains()` to check for keywords in user input.
-- **Pros:** Simple and easy to implement.
-- **Cons:** Limited accuracy; false positives may occur.
-- **Improvement:** Using **regular expressions** or an NLP library (like Microsoft's LUIS) for better intent recognition. 📊🔍🧠
-
-### **2. Using `ArrayList` for Responses**
-**Decision:** Stores chatbot responses in an `ArrayList`.
-- **Pros:** Quick to implement and easy to modify.
-- **Cons:** Inefficient for larger datasets.
-- **Improvement:** Switching to a `Dictionary<string, string>` for faster lookups. 🔄📂💡
-
-### **3. `Thread.Sleep()` for Typing Effect**
-**Decision:** Delays output to simulate typing.
-- **Pros:** Enhances user engagement.
-- **Cons:** Blocks execution; chatbot is unresponsive during typing.
-- **Improvement:** Using `Task.Delay()` for an **asynchronous approach**. ⏳⚡🔄
-
-### **4. Using `SoundPlayer` for Audio**
-**Decision:** Plays a `.wav` file at startup.
-- **Pros:** Simple and effective for basic sound playback.
-- **Cons:** Limited to `.wav` format and blocks execution.
-- **Improvement:** Using **NAudio** for broader file support and non-blocking playback. 🎵🔄🎧
-
-### **5. ASCII Art Conversion**
-**Decision:** Converts an image into ASCII.
-- **Pros:** Enhances visual appeal and branding.
-- **Cons:** Large images may reduce performance.
-- **Improvement:** Preprocessing images to optimize for ASCII conversion. 🎨🖼️🔢
-
----
-
-## **Future Improvements** 🚀🔧📈
-- **Implement AI-powered responses** with NLP for a smarter chatbot.
-- **Improve efficiency** by replacing `ArrayList` with `Dictionary`.
-- **Add database support** to store and learn from past interactions. 🧠📊💾
-
----
-
-## **Conclusion** 🏁🤖🔐
-The ChatBot is a simple but effective cybersecurity awareness chatbot. The project demonstrates key programming concepts like **string matching, console interaction, file handling, multithreading (for effects), and basic image processing (ASCII conversion)**. While it works well for small-scale use, **future enhancements** can make it **more scalable, intelligent, and interactive**. 🚀🎓💡
-
