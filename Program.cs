@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChatBot_PROGP1
+namespace ChatBot_PROGP2
 {
     public class Program
     {

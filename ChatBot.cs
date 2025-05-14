@@ -7,74 +7,115 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace ChatBot_PROGP1
+namespace ChatBot_PROGP2
 { 
     public class Chatbot
     {
-        //Key Features of the Chatbot
-        private VoiceGreeting voiceGreeting; // Plays an introductory voice greeting sound when the chatbot starts
-        private TypingEffect typingEffect; // This simulates typing responses to make the conservation feel more engaging
-        private AsciiArt asciiArt; //Displays the padlock logo in ASCII format to enhance the chatbot's visual appeal
-        private ArrayList responses;
+        // Chatbot components
+        private VoiceGreeting voiceGreeting;
+        private TypingEffect typingEffect;
+        private AsciiArt asciiArt;
+
+        // Memory and response handling
+        private Dictionary<string, List<string>> responses;
+        private Dictionary<string, int> responseIndexes = new Dictionary<string, int>();
+        private List<string> userInterests = new List<string>();
+        private string userName;
+        private string lastSuggestedTopic = "";
+        private bool awaitingFollowUp = false;  // Tracks if the bot is waiting for a topic confirmation
 
 
-        //Constructor to initialize the chatbot
+
+        // Constructor
         public Chatbot()
         {
             voiceGreeting = new VoiceGreeting();
             typingEffect = new TypingEffect();
             asciiArt = new AsciiArt();
-            InitializeResponses(); // Load responses
+            InitializeResponses();
         }
 
+        // Start chatbot interaction
         public void Start()
         {
             Console.Title = "CYBERSECURITY AWARENESS CHATBOT";
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-            // Display ASCII art and play voice greeting
+            // Display the visuals and sound
             voiceGreeting.PlayVoiceGreeting("greeting.wav");
             asciiArt.DisplayArt();
+            InitializeChatbot();
 
-            InitializeChatbot(); // Displays the loading effect
-
-            // Prompts user to enter their name
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            // Prompt the user to enter their name
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine("\n" + new string('=', 100));
             Console.Write("Please enter your name: ");
-            string userName = Console.ReadLine();
+            Console.ResetColor();
+
+            Console.ForegroundColor = ConsoleColor.White;
+            userName = Console.ReadLine();
+            Console.ResetColor();
+
             if (string.IsNullOrEmpty(userName)) userName = "User";
+
+            // Welcome message
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            typingEffect.Display($"Hello, {userName}! I am your Cybersecurity Awareness Chatbot. How can I assist you today?");
+            typingEffect.Display("You can ask me about password safety, phishing, ransomware, or safe browsing.");
             Console.ResetColor();
 
-            // ChatBot Welcome Message To User
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            typingEffect.Display($"Hello, {userName}! Welcome, I am your Cybersecurity Awareness Chatbot. How can I help you today?");
-            typingEffect.Display("You can ask me questions about password safety, phishing , safe browsing, or ransomware");
-            Console.ResetColor();
+            // Main chat loop
+            while (true)
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"\n{userName}: ");
+                Console.ResetColor();
 
-            while (true) // Continuously prompt user for input and provide response // It is an Infinite Chat Loop
-            { // User Input and Loop for Chatbot Responses
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write($"\n {userName}: ");// Fix this part
-                string userInput = Console.ReadLine().ToLower();
+                // User input in White
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                string userInput = Console.ReadLine().ToLower().Trim();
                 Console.ResetColor();
 
                 if (userInput == "exit" || userInput == "quit")
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     typingEffect.Display("Goodbye! Stay safe online.");
                     Console.ResetColor();
                     break;
                 }
 
+                // Bot is awaiting a response "yes" or "no"
+                if (awaitingFollowUp)
+                {
+                    string followUpResponse = HandleFollowUpTopic(userInput);
+
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.Write("Becky Bot: ");
+                    Console.ResetColor();
+
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    typingEffect.Display(followUpResponse);
+                    Console.ResetColor();
+
+                    continue; // Skip rest of loop to avoid normal response flow
+                }
+
+                // Normal chatbot flow
+                DetectAndStoreInterest(userInput);
                 string botResponse = GetResponse(userInput);
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                typingEffect.Display($"Becky Bot: {botResponse}");
+
+                // Becky Bot's reply
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Becky Bot: ");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+                typingEffect.Display(botResponse);
                 Console.ResetColor();
             }
         }
 
+        // Loading animation
         private static void InitializeChatbot()
         {
             Console.Write("Initializing security protocols: ");
@@ -84,65 +125,154 @@ namespace ChatBot_PROGP1
                 Console.Write(new string('#', i / 5));
                 Console.Write(new string(' ', 20 - (i / 5)));
                 Console.Write("]");
-                Thread.Sleep(100); // Simulate processing time
+                Thread.Sleep(100);
             }
             Console.WriteLine("\nSystem ready!\n");
         }
 
+        // Initialize responses 
         private void InitializeResponses()
         {
-            responses = new ArrayList
+            responses = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
             {
-                 new string[] { " how are you", " Sorry I'm just a chatbot, but thanks for asking! I'm just here to help you with cybersecurity questions." },
-                 new string[] { " what's your purpose", " My purpose is to educate and help you understand cybersecurity topics to stay safe online." },
-                 new string[] { " what can i ask you about", " You can ask me anything cybersecurity related." },
-                 new string[] { " password safety", " Use a strong password with at least 10 characters, including numbers and symbols." },
-                 new string[] { " phishing", " It is a type of attack often used to steal user data, such as login credentials and credit card numbers." },
-                 new string[] { " safe browsing", " Ensure you're visiting secure websites (look for HTTPS), avoid suspicious links, and use a reliable ad blocker." },
-                 new string[] { " ransomware ", "Ransomware is a type of malware that encrypts a victim's files. The attacker then demands a ransom from the victim to restore access to the data upon payment." },
+                { "how are you", new List<string> {
+                    "I'm just a chatbot, but thanks for asking!",
+                    "I'm functioning properly and ready to help you with cybersecurity tips."
+                } },
+                { "what's your purpose", new List<string> {
+                    "To help you stay safe online by providing cybersecurity awareness.",
+                    "I'm here to teach and answer your cybersecurity-related questions."
+                } },
+                { "what can i ask you about", new List<string> {
+                    "You can ask about password safety, phishing, ransomware, or safe browsing.",
+                    "Feel free to ask about anything related to cybersecurity!"
+                } },
+                { "password", new List<string> {
+                    "Use strong passwords with 10+ characters, symbols, and numbers.",
+                    "Never reuse passwords for different sites.",
+                    "Avoid using common passwords like '123456' or 'password'.",
+                    "Consider using a password manager to store complex passwords."
+                } },
+                { "phishing", new List<string> {
+                    "Phishing tricks people into clicking malicious links. Always verify the sender's email address!",
+                    "Don't trust emails asking for personal info—check the URL.",
+                    "Be cautious of messages with urgent or threatening language.",
+                    "Use two-factor authentication to add an extra layer of security."
+                } },
+                { "safe browsing", new List<string> {
+                    "Ensure you're visiting secure websites (look for HTTPS).",
+                    "Avoid downloading from untrusted sources.",
+                    "Use a reliable antivirus and ad blocker."
+                } },
+                { "ransomware", new List<string> {
+                    "Ransomware is a type of malware that encrypts a victim's files the attacker then demands a ransom from the victim to restore access to the data upon payment",
+                    "Back up your data regularly to avoid data loss.",
+                    "Keep your software up to date to avoid vulnerabilities."
+                } }
             };
         }
 
+        // Detect user interests and add to memory
+        private void DetectAndStoreInterest(string input)
+        {
+            string[] topics = { "password", "phishing", "ransomware", "safe browsing", "privacy" };
+
+            foreach (var topic in topics)
+            {
+                if (input.Contains(topic) && !userInterests.Contains(topic))
+                {
+                    userInterests.Add(topic);
+                }
+            }
+        }
+
+        // Main response logic
         private string GetResponse(string userInput)
         {
+            string sentimentReply = CheckSentiment(userInput);
+            if (sentimentReply != null)
+                return sentimentReply;
 
-            userInput = userInput.ToLower().Trim();// Convert user input to lowercase
-
-            foreach (string[] response in responses)
+            foreach (var entry in responses)
             {
-                string keyword = response[0];  // The keyword or phrase pattern
-                string reply = response[1];    // The corresponding response
-
-                // Check if user input contains any of the keywords or matches the pattern
-                if (MatchesKeyword(userInput, keyword))
+                if (userInput.Contains(entry.Key))
                 {
-                    return reply; // Return the response
+                    var replyList = entry.Value;
+                    if (!responseIndexes.ContainsKey(entry.Key))
+                        responseIndexes[entry.Key] = 0;
 
+                    int index = responseIndexes[entry.Key];
+                    string response = replyList[index];
+
+                    responseIndexes[entry.Key] = (index + 1) % replyList.Count;
+                    return response;
                 }
             }
 
-            // Default response for invalid input
-            return "I'm sorry, I didn't quite understand that. Can you please rephrase?";
+            if (userInterests.Count > 0)
+            {
+                var random = new Random();
+                string topic = userInterests[random.Next(userInterests.Count)];
+
+                if (topic != lastSuggestedTopic)
+                {
+                    lastSuggestedTopic = topic;
+                    awaitingFollowUp = true;
+                    return $"Earlier you mentioned {topic}. Would you like tips on that?";
+                }
+            }
+
+            return "I'm sorry, I didn't quite understand that. Could you rephrase or ask something cybersecurity-related?";
         }
 
-        private bool MatchesKeyword(string input, string keyword)
+        private string HandleFollowUpTopic(string input)
         {
-            // Check if the input contains the keyword
-            if (input.Contains(keyword))
+            awaitingFollowUp = false;
+
+            if (input.Contains("yes") || input.Contains("sure") || input.Contains("ok"))
             {
-                return true;
-            }
-            // Check if the input matches the pattern
-            string[] words = keyword.Split(' '); // Split the keyword into words
-            foreach (string word in words)
-            {
-                if (!input.Contains(word))
+                if (responses.ContainsKey(lastSuggestedTopic))
                 {
-                    return false; // Return false if any word is missing
+                    var tips = responses[lastSuggestedTopic];
+                    var index = responseIndexes.ContainsKey(lastSuggestedTopic) ? responseIndexes[lastSuggestedTopic] : 0;
+                    string tip = tips[index];
+
+                    responseIndexes[lastSuggestedTopic] = (index + 1) % tips.Count;
+                    return tip;
+                }
+                else
+                {
+                    return "Sorry, I don't have detailed tips on that topic yet.";
                 }
             }
-            return true; // Return true if all words are found
+            else if (input.Contains("no") || input.Contains("not really") || input.Contains("maybe later"))
+            {
+                return "No problem! Let me know if you change your mind or want help with something else.";
+            }
+            else
+            {
+                return GetResponse(input);
+            }
         }
 
+
+        // Sentiment detection and empathy
+        private string CheckSentiment(string input)
+        {
+            if (input.Contains("worried") || input.Contains("scared") || input.Contains("anxious"))
+            {
+                return "It's okay to feel that way. Cybersecurity can be overwhelming, but I'm here to help you step by step.";
+            }
+            else if (input.Contains("confused") || input.Contains("lost"))
+            {
+                return "No worries! I can explain things more clearly. What topic is confusing you?";
+            }
+            else if (input.Contains("thank you") || input.Contains("thanks"))
+            {
+                return $"You're welcome! I'm glad I could help. Let me if you need more assistance {userName}";
+            }
+
+            return null;
+        }
     }
 }

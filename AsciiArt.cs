@@ -4,14 +4,14 @@ using System.Drawing.Text;
 using System.IO;
 
 
-namespace ChatBot_PROGP1
-{ //Convert an image into ASCII format/art
+namespace ChatBot_PROGP2
+{ 
     public class AsciiArt
     { //constructor 
 
         // ASCII characters from dark to light
         private readonly string asciiChars = "@%#*+=-:. ";
-        private string asciiArt = ""; // Store ASCII result
+        private string asciiArt = ""; // Stores ASCII result
 
 
         public AsciiArt()
@@ -41,7 +41,7 @@ namespace ChatBot_PROGP1
         {
             //Start working on the logo with ASCII 
             Bitmap image = new Bitmap(full_Path);
-            image = new Bitmap(image, new Size(150, 200));
+            image = new Bitmap(image, new Size(60, 50));
 
             // Use for loop to get the height of the image
             for (int height = 0; height < image.Height; height++)
